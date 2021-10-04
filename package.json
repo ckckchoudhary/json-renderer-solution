@@ -2,6 +2,7 @@
   "name": "nested-json-renderer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://ckckchoudhary.github.io/json-renderer-solution/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -9,6 +10,7 @@
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react-dom": "^17.0.0",
+    "gh-pages": "^3.2.3",
     "just-clone": "^3.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -24,6 +26,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "deploy": "gh-pages -d build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
