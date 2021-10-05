@@ -4,12 +4,13 @@ import { NestedRenderer } from '../Routes/NestedRenderer';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { resetDataForContinent, setDataForContinent, setRandomData } from '../actions/countriesAction';
-import { ApiUtis } from '../ApiUtils/ApiUtils';
+import { ApiUtis } from '../AppUtils/ApiUtils/ApiUtils';
 import { LoaderIndicator } from '../widgets/LoadingIndicator/LoadingIndicator';
 import { hideLoader, showLoader } from '../actions/globalAction';
 import { NestedJsonGenerator } from '../Models/NestedJsonGenerator';
 import { NestedJson } from '../Models/NestedJson';
 import { DataGeneratorForm } from '../widgets/DataGeneratorForm/DataGeneratorForm';
+import { UiContext } from '../Contexts/UiContexts';
 
 interface AppProps {
   setDataForContinent(continentData: any, continentCode: string): void;
@@ -23,18 +24,22 @@ interface AppProps {
 
 interface AppState {
   shouldShowRandomData: boolean;
+  shouldAllAccordionsBeClosed: boolean;
 }
 
 class App extends React.Component<AppProps, AppState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      shouldShowRandomData: false
+      shouldShowRandomData: false,
+      shouldAllAccordionsBeClosed: false
     }
     this.fetchCountiesForContinent = this.fetchCountiesForContinent.bind(this);
     this.setShouldShowRandomDataFlag = this.setShouldShowRandomDataFlag.bind(this);
     this.unSetShouldShowRandomDataFlag = this.unSetShouldShowRandomDataFlag.bind(this);
     this.generateRandomData = this.generateRandomData.bind(this);
+    this.setHideAllAccordionsFlag = this.setHideAllAccordionsFlag.bind(this);
+    this.unSetHideAllAccordionsFlag = this.unSetHideAllAccordionsFlag.bind(this);
   }
 
   fetchCountiesForContinent(code: string) {
@@ -67,28 +72,43 @@ class App extends React.Component<AppProps, AppState> {
 
   }
 
+  setHideAllAccordionsFlag() {
+    this.setState({ shouldAllAccordionsBeClosed: true });
+  }
+
+  unSetHideAllAccordionsFlag() {
+    this.setState({ shouldAllAccordionsBeClosed: false });
+  }
+
 
   render() {
     const { data, loadersCount } = this.props
-    const { shouldShowRandomData } = this.state;
+    const { shouldShowRandomData, shouldAllAccordionsBeClosed } = this.state;
     return (
       <div className="app">
-        <div className="cta-container">
+        <UiContext.Provider
+          value={{
+            shouldAllAccordionsBeClosed: shouldAllAccordionsBeClosed,
+            setHideAllAccordionsFlag: this.setHideAllAccordionsFlag,
+            unSetHideAllAccordionsFlag: this.unSetHideAllAccordionsFlag
+          }}>
+          <div className="cta-container">
+            {shouldShowRandomData &&
+              <button className="cta" onClick={this.unSetShouldShowRandomDataFlag}>Populate with GraphQl Api</button>
+            }
+            {!shouldShowRandomData &&
+              <button className="cta" onClick={this.setShouldShowRandomDataFlag}>Populate with Random Data</button>
+            }
+          </div>
           {shouldShowRandomData &&
-            <button className="cta" onClick={this.unSetShouldShowRandomDataFlag}>Populate with GraphQl Api</button>
+            <DataGeneratorForm genrateData={this.generateRandomData} />
           }
-          {!shouldShowRandomData &&
-            <button className="cta" onClick={this.setShouldShowRandomDataFlag}>Populate with Random Data</button>
+          <div className="divider"></div>
+          <NestedRenderer data={data} fetchCountiesForContinent={this.fetchCountiesForContinent} />
+          {(loadersCount > 0) &&
+            <LoaderIndicator />
           }
-        </div>
-        {shouldShowRandomData &&
-          <DataGeneratorForm genrateData={this.generateRandomData} />
-        }
-        <div className="divider"></div>
-        <NestedRenderer data={data} fetchCountiesForContinent={this.fetchCountiesForContinent} />
-        {(loadersCount > 0) &&
-          <LoaderIndicator />
-        }
+        </UiContext.Provider>
       </div>
     );
   }

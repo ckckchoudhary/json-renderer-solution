@@ -1,10 +1,10 @@
-import { ApiConstants } from "../Constants/ApiConstants";
+import { ApiConstants } from "../../Constants/ApiConstants";
 import { BaseApiUtils } from "./BaseApiUtils";
 
 export class GetCountryInfo extends BaseApiUtils{
 
   private getQuery(continentCode:string){
-    const templateQuery = "{\"operationName\":null,\"variables\":{},\"query\":\"{\\n  continent(code: \\\"$CNAME\\\") {\\n    name\\n    countries {\\n      name\\n    }\\n  }\\n}\\n\"}";
+    const templateQuery = "{\"operationName\":null,\"variables\":{},\"query\":\"{\\n  continent(code: \\\"$CNAME\\\") {\\n    name\\n    countries {\\n      name\\n      languages {\\n       name\\n      }\\n    }\\n  }\\n}\\n\"}";
     return templateQuery.replace("$CNAME", continentCode);
   }
 

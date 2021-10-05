@@ -2,6 +2,7 @@ import { AnyAction } from "redux"
 import { RESET_DATA_FOR_CONTINENT, SET_DATA_FOR_CONTINENT, SET_RANDOM_DATA } from "../actions/countriesAction";
 import clone from 'just-clone';
 import { CountriesState } from "../Models/CountriesState";
+import { AppUtils } from "../AppUtils/AppUtils/AppUtils";
 
 
 const initialState = {
@@ -41,12 +42,8 @@ const initialState = {
 export const CountriesReducer = (state: CountriesState = initialState, action: AnyAction) => {
     switch (action.type) {
         case SET_DATA_FOR_CONTINENT: {
-            const { continentCode, data: { data: { continent: { countries } } } } = action;
-            const requiredContinent = state.data.find(({ code }) => code === continentCode);
-            if (requiredContinent && requiredContinent?.children) {
-                requiredContinent.children = countries;
-            }
-            return clone(state);
+            const newSate = AppUtils.parseApiResponseForNestedRenderer(state, action);
+            return newSate;
         }
 
         case SET_RANDOM_DATA: {
@@ -54,7 +51,7 @@ export const CountriesReducer = (state: CountriesState = initialState, action: A
             return clone(data);
         }
 
-        case RESET_DATA_FOR_CONTINENT:{
+        case RESET_DATA_FOR_CONTINENT: {
             return initialState;
         }
         default: return state;

@@ -1,7 +1,8 @@
 import React from "react";
 import "./loadingIndicator.css";
+import spinner from "../../assets/icons/spinner.gif"
 
 
 export const LoaderIndicator:React.FC = ()=>{
-    return <div className="loader">Loading...</div>
+    return <img src={spinner} alt="Loading please wait" className="loader"></img>
 }
